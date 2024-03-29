@@ -15,3 +15,6 @@ st.subheader("Other Apps:")
 st.page_link(page="https://proteincleaver-dev.streamlit.app/", label="Protein Cleaver", icon="🔪")
 st.page_link(page="https://peptide-fragmenter-dev.streamlit.app/", label="Peptide Fragmenter", icon="💣")
 st.page_link(page="https://spectra-viewer-dev.streamlit.app/", label="Spectra Viewer", icon="👓")
+st.page_link(page="https://isotopic-distributions.streamlit.app/", label="Isotopic Distribution Calculator", icon="📊")
+st.page_link(page="https://peptide-isotopic-distributions.streamlit.app/", label="Isotopic Distribution Calculator", icon="💻")
+
