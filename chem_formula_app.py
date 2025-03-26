@@ -3,11 +3,11 @@ import peptacular as pt
 
 from util import write_subscripted_ion_markdown
 
-st.set_page_config(layout="centered", page_title='Chemical Formula Mass Calculator', page_icon='🧪')
+st.set_page_config(layout="centered", page_title='ChemFormula', page_icon='🧰')
 
 
 with st.container():
-    st.title('Chemical Formula Calculator 🧪')
+    st.title('Chemical Formula Calculator 🧰')
     st.caption('A calculator to determine the monoisotopic and average masses of a chemical formula.')
     st.caption('Made with [peptacular](https://pypi.org/project/peptacular/)')
 

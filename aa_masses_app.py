@@ -9,10 +9,9 @@ import peptacular as pt
 from util import write_subscripted_ion_markdown
 
 # set up the page (wide mode)
-st.set_page_config(page_title='Amino Acid Mass Calculator', page_icon='📱',
-                   initial_sidebar_state='expanded')
+st.set_page_config(page_title='Amino Acid Masses', page_icon='🧰')
 
-st.title('Amino Acid Mass Calculator 📱')
+st.title('Amino Acid Mass Calculator 🧰')
 
 st.caption('A calculator to determine properties of amino acids, including monoisotopic and average masses, '
            'chemical compositions, and immonium ions.')

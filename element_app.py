@@ -3,9 +3,9 @@ import streamlit as st
 
 import peptacular as pt
 
-st.set_page_config(page_title='Element Mass Table', page_icon='🧮')
+st.set_page_config(page_title='ElementMass', page_icon='🧰')
 
-st.title('Element Mass Table 🧮')
+st.title('Element Mass Table 🧰')
 
 st.caption('A table of elements with atomic numbers, average masses, and monoisotopic masses.')
 st.caption('Made with [peptacular](https://pypi.org/project/peptacular/)')

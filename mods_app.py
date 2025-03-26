@@ -7,9 +7,9 @@ from peptacular import chem_mass
 from util import write_subscripted_ion_markdown
 
 
-st.set_page_config(page_title='Modification Mass Table', page_icon='🧰')
+st.set_page_config(page_title='PeptideMods', page_icon='🧰')
 
-st.title('Modification Mass Table 🧰')
+st.title('Peptide Modification Mass Table 🧰')
 
 st.caption('A table of modifications with monoisotopic and average masses.')
 st.caption('Made with [peptacular](https://pypi.org/project/peptacular/)')
