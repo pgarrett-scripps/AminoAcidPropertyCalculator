@@ -20,14 +20,16 @@ with st.container():
     with c2:
         moles = stp.number_input('Moles', value=1.0, help='Number of moles of the formula.')
 
+    precision = stp.slider('Precision', min_value=0, max_value=10, value=5, step=1, help='Number of decimal places to round the masses to.')
+
 st.divider()
 
 composition = pt.parse_chem_formula(formula)
 composition_subscript = write_subscripted_ion_markdown(composition)
 
 
-mono_mass = pt.chem_mass(composition, monoisotopic=True, precision=5)
-avg_mass = pt.chem_mass(composition, monoisotopic=False, precision=5)
+mono_mass = pt.chem_mass(composition, monoisotopic=True, precision=precision)
+avg_mass = pt.chem_mass(composition, monoisotopic=False, precision=precision)
 mole_mass = moles * avg_mass
 
 st.header(f'Chem Formula: {composition_subscript}')
@@ -40,10 +42,10 @@ c3.metric(f'{round(moles, 2)} mol Weight (g)', value=round(mole_mass, 5) )
 st.subheader('Elements')
 for k, v in composition.items():
     c1, c2, c3, c4 = st.columns(4)
-    element_average_mass = pt.chem_mass({k: v}, monoisotopic=False, precision=3)
+    element_average_mass = pt.chem_mass({k: v}, monoisotopic=False, precision=precision)
     element_subscript = write_subscripted_ion_markdown({k: v})
     c1.metric('Element', element_subscript)
-    c2.metric('Monoisotopic Mass', pt.chem_mass({k: v}, monoisotopic=True, precision=3))
+    c2.metric('Monoisotopic Mass', pt.chem_mass({k: v}, monoisotopic=True, precision=precision))
     c3.metric('Average Mass', element_average_mass)
     c4.metric('Percent of mass', f'{round(element_average_mass / avg_mass * 100,2)} %')
 
