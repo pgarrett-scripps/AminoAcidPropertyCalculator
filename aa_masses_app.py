@@ -4,27 +4,27 @@ This app will serve as a cheat sheet of proteomics values.
 
 import pandas as pd
 import streamlit as st
+import streamlit_permalink as stp
 import peptacular as pt
 
 from util import write_subscripted_ion_markdown
 
 # set up the page (wide mode)
-st.set_page_config(page_title='Amino Acid Masses', page_icon='🧰')
+st.set_page_config(page_title='AA-Masses', page_icon='🧰')
 
-st.title('Amino Acid Mass Calculator 🧰')
+st.title('Amino Acid Reference 🧰')
 
-st.caption('A calculator to determine properties of amino acids, including monoisotopic and average masses, '
-           'chemical compositions, and immonium ions.')
+st.markdown('Made with Made using [peptacular](https://github.com/pgarrett-scripps/peptacular): [![DOI](https://zenodo.org/badge/591504879.svg)](https://doi.org/10.5281/zenodo.15054278)', unsafe_allow_html=True)
 
-st.caption('Made with [peptacular](https://pypi.org/project/peptacular/)')
-
-precision = 5
 with st.container():
 
 
     c1, c2, c3 = st.columns(3)
-    nterm = c2.checkbox('Include N-term', value=False, help='Include N-terminus (+H) in calculations.')
-    cterm = c3.checkbox('Include C-term', value=False, help='Include C-terminus (+OH) in calculations.')
+    with c2:
+        nterm = stp.checkbox('Include N-term', value=False, help='Include N-terminus (+H) in calculations.')
+    
+    with c3:
+        cterm = stp.checkbox('Include C-term', value=False, help='Include C-terminus (+OH) in calculations.')
 
 
     #st.write('Precision')
@@ -33,18 +33,19 @@ with st.container():
     isotope_mods = []
 
     with c1.popover('Select Isotopes'):
-        carbon_isotope = st.radio('Carbon', ['12C', '13C', '14C'], index=0, horizontal=True,
+        carbon_isotope = stp.radio('Carbon', ['12C', '13C', '14C'], index=0, horizontal=True,
                                   help='Select the carbon isotope. 12C is the default and most common isotope.')
-        hydrogen_isotope = st.radio('Hydrogen', ['H', 'D', 'T'], index=0, horizontal=True,
+        hydrogen_isotope = stp.radio('Hydrogen', ['H', 'D', 'T'], index=0, horizontal=True,
                                     help='Select the hydrogen isotope. H is the default and most common isotope.')
-        nitrogen_isotope = st.radio('Nitrogen', ['14N', '15N'], index=0, horizontal=True,
+        nitrogen_isotope = stp.radio('Nitrogen', ['14N', '15N'], index=0, horizontal=True,
                                     help='Select the nitrogen isotope. 14N is the default and most common isotope.')
-        oxygen_isotope = st.radio('Oxygen', ['16O', '17O', '18O'], index=0, horizontal=True,
+        oxygen_isotope = stp.radio('Oxygen', ['16O', '17O', '18O'], index=0, horizontal=True,
                                   help='Select the oxygen isotope. 16O is the default and most common isotope.')
-        sulfur_isotope = st.radio('Sulfur', ['32S', '33S', '34S', '36S'], index=0, horizontal=True,
+        sulfur_isotope = stp.radio('Sulfur', ['32S', '33S', '34S', '36S'], index=0, horizontal=True,
                                   help='Select the sulfur isotope. 32S is the default and most common isotope.')
-        selenium_isotope = st.radio('Selenium', ['74Se', '76Se', '77Se', '78Se', '80Se', '82Se'], index=0, horizontal=True,
+        selenium_isotope = stp.radio('Selenium', ['74Se', '76Se', '77Se', '78Se', '80Se', '82Se'], index=0, horizontal=True,
                                     help='Select the selenium isotope. 74Se is the default and most common isotope.')
+
 
         if carbon_isotope != '12C':
             isotope_mods.append(pt.Mod(carbon_isotope, 1))
@@ -59,7 +60,11 @@ with st.container():
         if selenium_isotope != '74Se':
             isotope_mods.append(pt.Mod(selenium_isotope, 1))
 
+    precision = stp.slider('Precision', min_value=0, max_value=10, value=5, step=1, help='Number of decimal places to round the masses to.')
 
+
+if isotope_mods:
+    st.info('Non-default isotope(s) selected')
 
 aa_data = {'Name': [],
            '3 letter code': [],
@@ -140,96 +145,98 @@ aa_df = aa_df.sort_values(by='Monoisotopic Mass')
 
 precision_str = "{:." + str(precision) + "f}"
 
-st.subheader('Amino Acids')
-st.dataframe(
-    aa_df.style.format({'Monoisotopic Mass': precision_str, 'Average Mass': precision_str, 'Immonium ion (+1)': precision_str}),
-    column_config={
-        "gif": st.column_config.ImageColumn(
-            "Structure", help="Streamlit app preview screenshots.",
-            width='medium'
-        ),
-        "Isotopes":  st.column_config.BarChartColumn(
-            "Isotopes", help="Streamlit app preview screenshots",
-            width='small', y_min=0, y_max=1
-        ),
-        "3 letter code": st.column_config.TextColumn(
-            "3 Letter Code", help="Three letter code for amino acid..",
-            width='small'
-        ),
-        "1 letter code": st.column_config.TextColumn(
-            "1 Letter Code", help="One letter code for amino acid.",
-            width='small'
-        ),
+aa_tab, immonium_tab = st.tabs(['Amino Acids', 'Immonium Ion (+1)'])
 
-        "Name": st.column_config.TextColumn(
-            "Name", help="Name of amino acid.",
-            width='small'
-        ),
+with aa_tab:
+    st.dataframe(
+        aa_df.style.format({'Monoisotopic Mass': precision_str, 'Average Mass': precision_str, 'Immonium ion (+1)': precision_str}),
+        column_config={
+            "gif": st.column_config.ImageColumn(
+                "Structure", help="Streamlit app preview screenshots.",
+                width='medium'
+            ),
+            "Isotopes":  st.column_config.BarChartColumn(
+                "Isotopes", help="Streamlit app preview screenshots",
+                width='small', y_min=0, y_max=1
+            ),
+            "3 letter code": st.column_config.TextColumn(
+                "3 Letter Code", help="Three letter code for amino acid..",
+                width='small'
+            ),
+            "1 letter code": st.column_config.TextColumn(
+                "1 Letter Code", help="One letter code for amino acid.",
+                width='small'
+            ),
 
-        "Composition": st.column_config.TextColumn(
-            "Chem Formula", help="Chemical composition of amino acid.",
-            width='small'
-        ),
+            "Name": st.column_config.TextColumn(
+                "Name", help="Name of amino acid.",
+                width='small'
+            ),
 
-        "Monoisotopic Mass": st.column_config.NumberColumn(
-            "Mono Mass", help="Monoisotopic mass of amino acid.",
-            width='small'
-        ),
+            "Composition": st.column_config.TextColumn(
+                "Chem Formula", help="Chemical composition of amino acid.",
+                width='small'
+            ),
 
-        "Average Mass": st.column_config.NumberColumn(
-            "Average Mass", help="Average mass of amino acid.",
-            width='small'
-        ),
+            "Monoisotopic Mass": st.column_config.NumberColumn(
+                "Mono Mass", help="Monoisotopic mass of amino acid.",
+                width='small'
+            ),
+
+            "Average Mass": st.column_config.NumberColumn(
+                "Average Mass", help="Average mass of amino acid.",
+                width='small'
+            ),
 
 
-    },
-    hide_index=True,
-    use_container_width=True,
-    height=950,
-    column_order=("Name", "3 letter code", "1 letter code", "Monoisotopic Mass", "Average Mass", "Composition")
-)
+        },
+        hide_index=True,
+        use_container_width=True,
+        height=950,
+        column_order=("Name", "3 letter code", "1 letter code", "Monoisotopic Mass", "Average Mass", "Composition")
+    )
 
-st.subheader('Immonium Ions (+1)')
-imonium_ion_df = pd.DataFrame(imonium_ion_data)
-imonium_ion_df = imonium_ion_df.sort_values(by='Monoisotopic Mass')
-st.dataframe(
-    imonium_ion_df.style.format({'Monoisotopic Mass': precision_str
-                                    , 'Average Mass': precision_str
-                                    }),
-    column_config={
+with immonium_tab:
+    imonium_ion_df = pd.DataFrame(imonium_ion_data)
+    imonium_ion_df = imonium_ion_df.sort_values(by='Monoisotopic Mass')
+    st.dataframe(
+        imonium_ion_df.style.format({'Monoisotopic Mass': precision_str
+                                        , 'Average Mass': precision_str
+                                        }),
+        column_config={
 
-        "3 letter code": st.column_config.TextColumn(
-            "3 letter code", help="Three letter code for amino acid",
-            width='small'
-        ),
-        "1 letter code": st.column_config.TextColumn(
-            "1 letter code", help="One letter code for amino acid",
-            width='small'
-        ),
+            "3 letter code": st.column_config.TextColumn(
+                "3 letter code", help="Three letter code for amino acid",
+                width='small'
+            ),
+            "1 letter code": st.column_config.TextColumn(
+                "1 letter code", help="One letter code for amino acid",
+                width='small'
+            ),
 
-        "Name": st.column_config.TextColumn(
-            "Name", help="Name of amino acid",
-            width='small'
-        ),
+            "Name": st.column_config.TextColumn(
+                "Name", help="Name of amino acid",
+                width='small'
+            ),
 
-        "Composition": st.column_config.TextColumn(
-            "Chem Formula", help="Chemical composition of amino acid.",
-            width='small'
-        ),
+            "Composition": st.column_config.TextColumn(
+                "Chem Formula", help="Chemical composition of amino acid.",
+                width='small'
+            ),
 
-        "Monoisotopic Mass": st.column_config.NumberColumn(
-            "Mono Mass", help="Monoisotopic mass of amino acid.",
-            width='small'
-        ),
+            "Monoisotopic Mass": st.column_config.NumberColumn(
+                "Mono Mass", help="Monoisotopic mass of amino acid.",
+                width='small'
+            ),
 
-        "Average Mass": st.column_config.NumberColumn(
-            "Average Mass", help="Average mass of amino acid.",
-            width='small'
-        ),
-    },
+            "Average Mass": st.column_config.NumberColumn(
+                "Average Mass", help="Average mass of amino acid.",
+                width='small'
+            ),
+        },
 
-    hide_index=True,
-    use_container_width=True,
-    height=950
+        hide_index=True,
+        use_container_width=True,
+        height=950
 
-)
+    )

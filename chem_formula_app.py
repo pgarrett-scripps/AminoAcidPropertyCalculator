@@ -1,19 +1,24 @@
 import streamlit as st
+import streamlit_permalink as stp
 import peptacular as pt
 
 from util import write_subscripted_ion_markdown
 
-st.set_page_config(layout="centered", page_title='ChemFormula', page_icon='🧰')
+st.set_page_config(layout="centered", page_title='Formula-Calc', page_icon='🧰')
 
 
 with st.container():
     st.title('Chemical Formula Calculator 🧰')
-    st.caption('A calculator to determine the monoisotopic and average masses of a chemical formula.')
-    st.caption('Made with [peptacular](https://pypi.org/project/peptacular/)')
+
+    st.markdown('Made with Made using [peptacular](https://github.com/pgarrett-scripps/peptacular): [![DOI](https://zenodo.org/badge/591504879.svg)](https://doi.org/10.5281/zenodo.15054278)', unsafe_allow_html=True)
+
 
     c1, c2 = st.columns([7, 3])
-    formula = c1.text_input('Chemical formula', 'C6H12O6')
-    moles = c2.number_input('Moles', value=1.0, help='Number of moles of the formula.')
+    with c1:
+        formula = stp.text_input('Chemical formula', 'C6H12O6')
+
+    with c2:
+        moles = stp.number_input('Moles', value=1.0, help='Number of moles of the formula.')
 
 st.divider()
 
